@@ -1,118 +1,105 @@
-# EPSS Intel: Advanced Vulnerability Intelligence CLI
+# EPSS Intel WebApp (v2.0.0)
 
-**EPSS Intel** is a powerful command-line tool designed for security researchers, SOC analysts, and vulnerability management teams. It enriches raw CVE data with real-time **EPSS (Exploit Prediction Scoring System)** scores, **CISA KEV (Known Exploited Vulnerabilities)** status, and rich metadata from the **CVE Services API (v5)**.
+## Project Overview
 
-## 🚀 Key Features
+This document describes the **EPSS Intel WebApp**, a web-based tool designed to fetch, analyze, and display Exploit Prediction Scoring System (EPSS) scores and detailed Common Vulnerability Enumeration (CVE) information through a user-friendly web interface.
 
-### 🛡️ Multi-Source Vulnerability Intelligence
-- **EPSS Scores:** Fetch real-time exploit probability and percentile rankings from the FIRST API.
-- **CISA KEV Integration:** Automatically cross-reference CVEs with CISA's "Known Exploited Vulnerabilities" list to identify active exploitation in the wild.
-- **Rich Metadata:** Fetch CVE Titles, CVSS 3.x scores, and Severity rankings directly from the modern CVE Services API (v5).
-- **NVD Descriptions:** Optional fallback to fetch detailed vulnerability descriptions from the NIST NVD API.
+This project is a complete refactoring of the original `epss-intel` CLI tool, transforming its functionality from a terminal-based output to a local HTML host display. The original CLI tool's core logic for fetching data from EPSS, CISA KEV (Known Exploited Vulnerabilities), NVD (National Vulnerability Database), and CVE Services APIs has been preserved and adapted for the web environment.
 
-### ⚡ High-Performance Architecture
-- **Parallel Fetching:** Uses multi-threaded execution (`ThreadPoolExecutor`) to fetch metadata for dozens of CVEs concurrently.
-- **Local Caching:** Implements a persistent local cache (`~/.epss_cve_cache.json`) to store metadata and descriptions, making subsequent lookups instantaneous.
-- **Intelligent Batching:** Automatically handles API rate limits and URL character constraints for large batch queries.
+**Authorship:**
+*   **Original CLI Tool Concept/Initial Version:** Omar Santos (@santosomar)
+*   **Web App Refactoring and Re-Authorship:** Jonathan Beals
+*   **Project Created With:** Gemini CLI
+*   **Version:** 2.0.0 (Web App Integration)
 
-### 📊 Advanced Data Management
-- **Filtering:** Focus on high-risk items with `--min-epss`, `--min-cvss`, or `--kev-only` flags.
-- **Sorting:** Prioritize your remediation list by sorting results by EPSS score, CVSS score, or CVE ID.
-- **Summary Statistics:** Every report concludes with a comprehensive "Bottom Line" summary, including severity breakdowns and active exploitation counts.
+## Features
 
-### 🎨 Modern UI & Export
-- **Rich Table Output:** Color-coded terminal tables with clear legends and status indicators.
-- **Flexible Export:** Save results directly to **CSV** or **JSON** for integration with other security workflows.
+*   **Web-based Interface:** Access the EPSS Intel functionality through your web browser.
+*   **CVE Input:** Easily input single or multiple CVE IDs via a text area (comma-separated) or by uploading a newline-separated text file.
+*   **Comprehensive Data Display:** View EPSS scores, percentiles, CISA KEV status, CVE titles, CVSS scores, severities, and descriptions in a clear, tabular format.
+*   **Color-Coded EPSS Scores:** Visual cues for high (red), medium (orange), and low (green) EPSS scores.
+*   **Static Assets:** Basic CSS for a clean and readable interface.
+*   **Python Bottle Framework:** Utilizes a lightweight Python web framework for serving the application.
+
+## Installation Guide
+
+This guide assumes you have Python 3.8+ and `pipenv` installed on your system.
+
+**Prerequisites Installation:**
+
+*   **Python 3.8+:** Download from [python.org](https://www.python.org/downloads/).
+*   **pip (Python package installer):** Usually comes with Python. Verify with `python3 -m pip --version`.
+*   **pipenv:** Install globally using `pip`:
+    ```bash
+    python3 -m pip install --user pipenv
+    ```
+    Ensure `pipenv`'s executable path is in your system's PATH. You might need to add `~/.local/bin` to your PATH environment variable. Refer to `pipenv`'s official installation guide for details.
+
+1.  **Navigate to the project root directory:**
+    Open your terminal and go to the directory where you cloned or extracted the `epss-client` project (this directory should contain `requirements.txt`, `Pipfile`, and the `epss_intel/` subdirectory).
+    ```bash
+    cd path/to/your/epss-client-project
+    ```
+
+2.  **Install project dependencies using `pipenv`:**
+    This command will create a virtual environment for the project (if one doesn't exist) and install all necessary Python packages (`requests`, `bottle`, `rich`).
+    ```bash
+    pipenv install requests bottle rich
+    ```
+    *   **Alternative (activate shell):** You can also activate the virtual environment first by running `pipenv shell` in your project root, and then execute `python3 epss_intel/epss_intel_webapp.py`.
+    *   **Note on `sudo`:** If you encounter permission errors during `pipenv install`, you may have to use `sudo pipenv install requests bottle rich`. However, ideally, `pipenv` environments should be user-owned. If you consistently need `sudo` for `pipenv` commands, consider fixing your system's Python/pipenv permissions for a more sustainable development setup.
+
+## Usage
+
+1.  **Start the Web Server:**
+    From your project root directory, run the web application using `pipenv`:
+    ```bash
+    pipenv run python3 epss_intel/epss_intel_webapp.py
+    ```
+    You should see output similar to `Bottle vX.X.X server starting up (using WsgiRefServer)... Listening on http://localhost:8080/`.
+    *   **Important:** If a server instance is already running, stop it first by pressing `Ctrl+C` in the terminal where it's running.
+
+2.  **Access the Web App:**
+    Open your web browser and navigate to:
+    ```
+    http://localhost:8080/
+    ```
+    *   **Port 8080 Inaccessible?** If you are unable to access `http://localhost:8080/`, ensure that port 8080 is not blocked by a firewall on your system.
+
+
+3.  **Enter CVEs:**
+    On the web page, you will find a text area. Enter CVE IDs either one per line or comma-separated (e.g., `CVE-2021-44228, CVE-2023-2825`).
+    You can also use the "Upload CVE File" option to provide a text file with CVEs (one per line).
+
+4.  **Get EPSS Scores:**
+    Click the "Get EPSS Scores" button. The application will fetch the data and display the results in a table on the same page.
+
+## Project Structure
+
+```
+[Your-Project-Root-Directory]/
+├── epss_intel/
+│   └── epss_intel_webapp.py    # The refactored web application script
+│   └── epss_intel.py           # Original CLI script (left intact)
+├── views/
+│   └── index.tpl               # HTML template for the web interface
+├── static/
+│   └── style.css               # CSS for styling the web interface
+├── requirements.txt
+└── Pipfile
+└── Pipfile.lock
+```
+
+## Troubleshooting & Notes
+
+*   **`ModuleNotFoundError`:** Ensure you are in the correct directory (`epss-client` project directory) and have run `pipenv install` to install all dependencies. If issues persist, try `pipenv --rm` followed by `pipenv install` to reset the virtual environment.
+*   **`TemplateError: Template 'index' not found.`:** This was a tricky issue. It's resolved in `epss_intel_webapp.py` by ensuring `bottle.TEMPLATE_PATH` is explicitly set to the correct absolute path of the `views` directory and passing just the template name (`'index'`) to the `template()` function.
+*   **"500 Internal Server Error":** Check the console where your web server is running (`pipenv run ...` terminal). Detailed Python tracebacks will appear there, which are crucial for diagnosing the error.
+*   **Stale or Incorrect Data:** If the EPSS scores or CVE details appear outdated or incorrect, you might need to clear the local cache files. These are typically located in your home directory:
+    *   `~/.epss_cisa_kev.json`
+    *   `~/.epss_cve_cache.json`
+    Deleting these files will force the application to fetch fresh data from the APIs.
 
 ---
 
-## 📥 Installation
-
-The most reliable way to install **EPSS Intel** is using `pipx`, which ensures the tool and its dependencies (like `requests` and `rich`) are installed in an isolated environment and made available as a global command.
-
-### **1. Install pipx (if not already present)**
-```bash
-# Ubuntu/Debian
-sudo apt update && sudo apt install pipx
-pipx ensurepath
-```
-
-### **2. Install EPSS Intel**
-Clone the repository and install it in "editable" mode so that any future updates to the source code are immediately reflected in the global command:
-
-```bash
-# Clone the fork
-git clone https://github.com/SigTL/epss-client.git
-cd epss-client
-
-# Install globally in editable mode
-pipx install --editable . --force
-```
-
-### **3. Verify Installation**
-Check that the command is available and the help menu displays correctly:
-```bash
-epss-intel --help
-```
-
----
-
-## 🛠️ Usage
-
-### **Core Command**
-```bash
-epss-intel [CVE-ID] [OPTIONS]
-```
-
-### **Primary Options**
-| Option | Short | Description |
-| :--- | :--- | :--- |
-| `--cve-details` | `-d` | Fetch Title, CVSS, Severity, and Description (Parallel & Cached). |
-| `--list` | `-l` | Comma-separated list of CVE IDs. |
-| `--file` | `-f` | Path to a file containing one CVE ID per line. |
-| `--sort` | | Sort results by `epss`, `cvss`, or `cve`. |
-| `--min-epss` | | Filter results by minimum EPSS probability (0.0 - 1.0). |
-| `--kev-only` | | Only show vulnerabilities on the CISA KEV list. |
-| `--output` | `-o` | Save results to a file (CSV or JSON). |
-| `--include-desc`| | Force a description fetch specifically from NVD (slow). |
-
-### **Examples**
-
-#### **1. Quick Risk Assessment**
-Fetch rich intelligence for a critical vulnerability:
-```bash
-epss-intel CVE-2021-44228 -d
-```
-
-#### **2. Batch Processing & Sorting**
-Analyze a list of CVEs and sort them by exploit probability:
-```bash
-epss-intel -l CVE-2024-21626,CVE-2023-38831,CVE-2017-0144 -d --sort epss
-```
-
-#### **3. High-Priority Filtering**
-Show only actively exploited vulnerabilities from a file:
-```bash
-epss-intel -f vulnerabilities.txt -d --kev-only
-```
-
-#### **4. Data Export**
-Export filtered results to a JSON file for further analysis:
-```bash
-epss-intel -f scan_results.txt -d --min-epss 0.05 --output report.json
-```
-
----
-
-## 📋 Requirements
-- Python 3.8+
-- `requests`
-- `rich`
-
----
-
-## ⚖️ License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-*Author: Omar Santos (@santosomar) | Enhanced by Forge (Gemini CLI Engineer)*
+*Generated by Jenny, orchestrated with Sage (Researcher) and Forge (Engineer)*
