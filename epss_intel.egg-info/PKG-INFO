@@ -1,0 +1,83 @@
+Metadata-Version: 2.4
+Name: epss-intel
+Version: 1.2
+Summary: A powerful CLI tool to fetch and analyze EPSS scores and CVE descriptions.
+Home-page: https://github.com/SigTL/epss-client
+Author: Omar Santos
+Author-email: santosomar@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests
+Requires-Dist: rich
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: license-file
+Dynamic: requires-dist
+Dynamic: summary
+
+# EPSS Intel
+
+A powerful CLI tool to fetch and analyze **EPSS (Exploit Prediction Scoring System)** scores and **NVD (National Vulnerability Database)** descriptions for CVEs. 
+
+This tool helps security teams move from reactive patching to proactive risk-based remediation by providing both the probability of exploitation and the context of the vulnerability.
+
+## Features
+
+- **EPSS Scores**: Real-time probability and percentile data from the FIRST EPSS API.
+- **Batch Processing**: Query multiple CVEs via command-line lists or newline-separated files.
+- **Vulnerability Intelligence**: Optionally fetch descriptions from the NIST NVD API with local caching for performance.
+- **Modern UI**: Color-coded tables and progress bars using the `rich` library.
+- **Data Export**: Export results to CSV or JSON for further analysis.
+- **Backward Compatible**: Maintains support for legacy single-CVE lookups and silent modes.
+
+## Installation
+
+```sh
+git clone https://github.com/SigTL/epss-client.git
+cd epss-client
+pip install .
+```
+
+## Usage
+
+### Basic Usage (Single CVE)
+```sh
+epss-intel CVE-2021-44228
+```
+
+### Batch Processing (List)
+```sh
+epss-intel -l CVE-2021-44228,CVE-2014-0160,CVE-2017-0144
+```
+
+### Batch Processing (File)
+```sh
+epss-intel -f my_cves.txt
+```
+
+### Include Vulnerability Descriptions (Intelligence Mode)
+```sh
+epss-intel -f my_cves.txt --include-desc
+```
+*Note: The first run may be slow due to NVD rate limits (unless an `--nvd-key` is provided). Subsequent runs will use the local cache.*
+
+### Exporting to CSV
+```sh
+epss-intel -f my_cves.txt -o results.csv
+```
+
+### Full Help
+```sh
+epss-intel -h
+```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.

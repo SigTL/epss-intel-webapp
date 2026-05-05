@@ -1,0 +1,2 @@
+[console_scripts]
+epss-intel = epss_intel.epss_intel:main
