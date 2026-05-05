@@ -49,6 +49,19 @@ This guide assumes you have Python 3.8+ and `pipenv` installed on your system.
     *   **Alternative (activate shell):** You can also activate the virtual environment first by running `pipenv shell` in your project root, and then execute `python3 epss_intel/epss_intel_webapp.py`.
     *   **Note on `sudo`:** If you encounter permission errors during `pipenv install`, you may have to use `sudo pipenv install requests bottle rich`. However, ideally, `pipenv` environments should be user-owned. If you consistently need `sudo` for `pipenv` commands, consider fixing your system's Python/pipenv permissions for a more sustainable development setup.
 
+### Windows-Specific Notes
+
+While the application is largely cross-platform, here are some considerations for Windows users:
+
+*   **Python and `pipenv` Installation:**
+    *   Ensure you check the option to "Add Python to PATH" during Python installation from [python.org](https://www.python.org/downloads/).
+    *   The location where `pipenv` executables are installed and need to be added to your system's PATH will differ (e.g., `C:\Users\<username>\AppData\Roaming\Python\PythonXX\Scripts`). Refer to `pipenv`'s documentation for exact details.
+*   **Command to Run the Web App:**
+    *   You might need to use `python` instead of `python3` (e.g., `pipenv run python epss_intel\epss_intel_webapp.py`), depending on how Python is configured on your system.
+    *   Windows typically uses backslashes (`\`) for path separators, so adjust the path in the run command if necessary, though `os.path.join` handles this internally within the script.
+*   **Firewall:**
+    *   Windows Defender Firewall or any other security software might block `http://localhost:8080`. You may need to create an inbound rule to allow connections on this port.
+
 ## Usage
 
 1.  **Start the Web Server:**
